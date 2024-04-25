@@ -1,16 +1,23 @@
 package com.example.blog.bbs.service;
 
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.blog.bbs.dao.BoardDAO;
 import com.example.blog.bbs.vo.BoardListVO;
 import com.example.blog.bbs.vo.BoardVO;
+import com.example.blog.beans.FileHandler;
+import com.example.blog.beans.FileHandler.StoredFile;
 
 @Service
 public class BoardServiceImpl implements BoardService {
 	@Autowired
 	private BoardDAO boardDAO;
+	@Autowired
+	private FileHandler fileHandler;
 	
 	@Override
 	public BoardListVO getAllBoard() {
@@ -21,7 +28,12 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public boolean createNewBoard(BoardVO boardVO) {
+	public boolean createNewBoard(BoardVO boardVO, MultipartFile file) {
+		StoredFile storedFile = fileHandler.storeFile(file);
+		
+		boardVO.setFileName(storedFile.getRealFileName());
+		boardVO.setOriginFileName(storedFile.getFileName());
+		
 		return boardDAO.createNewBoard(boardVO) > 0;
 	}
 	
@@ -42,7 +54,22 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public boolean updateOneBoard(BoardVO boardVO) {
+	public boolean updateOneBoard(BoardVO boardVO, MultipartFile file) {
+		if (file != null && !file.isEmpty()) {
+			BoardVO originBoardVO = boardDAO.getOneBoard(boardVO.getId());
+			
+			if (originBoardVO != null && originBoardVO.getFileName() != null) {
+				File originFile = fileHandler.getStoredFile(originBoardVO.getOriginFileName());
+				
+				if (originFile.exists() && originFile.isFile()) {
+					originFile.delete();
+				}
+			}
+			StoredFile storedFile = fileHandler.storeFile(file);
+			boardVO.setFileName(storedFile.getRealFileName());
+			boardVO.setOriginFileName(storedFile.getFileName());
+		}
+		
 		return boardDAO.updateOneBoard(boardVO) > 0;
 	}
 	

@@ -14,7 +14,7 @@
     div.grid {
         display: grid;
         grid-template-columns: 80px 1fr;
-        grid-template-rows: 28px 28px 28px 28px 28px 320px 1fr;
+        grid-template-rows: 28px 28px 28px 28px 28px 28px 320px 1fr;
         row-gap: 10px;
     }
 
@@ -33,6 +33,16 @@
     button, input, textarea {
         padding: 10px;
     }
+
+    a {
+        border: solid 1px #ccc;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    a:hover {
+        background-color: #ccc;
+    }
 </style>
 </head>
 <body>
@@ -40,18 +50,23 @@
     <div class="grid">
         <label for="subject">제목</label>
         <div>${board.subject}</div>
-        <label for="subject">이메일</label>
+        <label for="email">이메일</label>
         <div>${board.email}</div>
-        <label for="subject">조회수</label>
+        <label for="viewCnt">조회수</label>
         <div>${board.viewCnt}</div>
-        <label for="subject">등록일</label>
+        <label for="originFileName">첨부파일</label>
+        <div>
+            <a href="/board/file/download/${board.id}">${board.originFileName}</a>
+        </div>
+        <label for="CrtDt">등록일</label>
         <div>${board.crtDt}</div>
-        <label for="subject">수정일</label>
+        <label for="mdfyDt">수정일</label>
         <div id="mdfy-dt">${board.mdfyDt}</div>
-        <label for="subject">내용</label>
+        <label for="content">내용</label>
         <div>${board.content}</div>
         <div class="btn-group">
             <div class="right-align">
+                <a href="/board/list">게시판으로</a>
                 <a href="/board/modify/${board.id}">수정</a>
                 <a href="/board/delete/${board.id}" id="del">삭제</a>
             </div>

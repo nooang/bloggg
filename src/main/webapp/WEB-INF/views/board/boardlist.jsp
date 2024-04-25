@@ -79,7 +79,7 @@
 					<c:when test="${not empty boardList.boardList}">
 						<c:forEach items="${boardList.boardList}" var="board">
 							<tr>
-								<td>${board.id}</td>
+								<td name="id">${board.id}</td>
 								<td><a href="/board/view?id=${board.id}">${board.subject}</a></td>
 								<td>${board.email}</td>
 								<td>${board.viewCnt}</td>
@@ -100,5 +100,14 @@
 			<a href="/board/write">글쓰기</a>
 		</div>
 	</div>
+	<script>
+		const id = document.getElementsByName('id');
+
+		for (let i = 0; i < id.length; i++) {
+			let idString = id[i].innerText;
+			let idNum = idString.match(/0*([1-9]\d*)$/)[1];
+			id[i].innerText = `\${idNum}`
+		}
+	</script>
 </body>
 </html>

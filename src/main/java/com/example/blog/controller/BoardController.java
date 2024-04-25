@@ -1,6 +1,15 @@
 package com.example.blog.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -8,11 +17,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.blog.bbs.service.BoardService;
 import com.example.blog.bbs.vo.BoardListVO;
 import com.example.blog.bbs.vo.BoardVO;
+import com.example.blog.beans.FileHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -21,6 +32,8 @@ import jakarta.servlet.http.HttpServletRequest;
 public class BoardController {
 	@Autowired
 	private BoardService boardService;
+	@Autowired
+	private FileHandler fileHandler;
 	
 	@GetMapping("/list")
 	public ModelAndView viewBoardList() {
@@ -37,11 +50,11 @@ public class BoardController {
 	}
 	
 	@PostMapping("/write")
-	public ModelAndView doBoardWrite(@ModelAttribute BoardVO boardVO, HttpServletRequest request) {
+	public ModelAndView doBoardWrite(@ModelAttribute BoardVO boardVO, HttpServletRequest request, @RequestParam MultipartFile file) {
 		ModelAndView mav = new ModelAndView("redirect:/board/list");
 		boardVO.setIpAddr(request.getRemoteAddr());
 		
-		boolean isSuccess = boardService.createNewBoard(boardVO);
+		boolean isSuccess = boardService.createNewBoard(boardVO, file);
 		if (isSuccess) {
 			return mav;
 		}
@@ -62,6 +75,33 @@ public class BoardController {
 		return mav;
 	}
 	
+	@GetMapping("/file/download/{id}")
+	public ResponseEntity<Resource> downloadFile(@PathVariable String id) {
+		BoardVO boardVO = boardService.getOneBoard(id, false);
+		
+		if (boardVO == null) {
+			throw new IllegalArgumentException("잘못된 접근입니다. 혹시 없는 게시글이 아닌지?");
+		}
+		
+		File storedFile = fileHandler.getStoredFile(boardVO.getFileName());
+		
+		HttpHeaders header = new HttpHeaders();
+		header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + boardVO.getOriginFileName());
+		
+		InputStreamResource resource;
+		try {
+			resource = new InputStreamResource(new FileInputStream(storedFile));
+		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException("파일이 존재하지 않습니다.");
+		}
+		
+		return ResponseEntity.ok()
+				             .headers(header)
+				             .contentLength(storedFile.length())
+				             .contentType(MediaType.parseMediaType("application/octet-stream"))
+				             .body(resource);
+	}
+	
 	@GetMapping("/modify/{id}")
 	public ModelAndView viewBoardModifyPage(@PathVariable String id) {
 		ModelAndView mav = new ModelAndView("board/boardmodify");
@@ -72,10 +112,10 @@ public class BoardController {
 	}
 	
 	@PostMapping("/modify")
-	public ModelAndView doBoardUpdate(@ModelAttribute BoardVO boardVO) {
+	public ModelAndView doBoardUpdate(@ModelAttribute BoardVO boardVO, @RequestParam MultipartFile file) {
 		ModelAndView mav = new ModelAndView("redirect:/board/view?id=" + boardVO.getId());
 		
-		boolean isSuccess = boardService.updateOneBoard(boardVO);
+		boolean isSuccess = boardService.updateOneBoard(boardVO, file);
 		if (isSuccess) {
 			return mav;
 		}
