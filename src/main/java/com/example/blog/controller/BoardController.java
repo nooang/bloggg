@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ import com.example.blog.bbs.vo.BoardVO;
 import com.example.blog.beans.FileHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/board")
@@ -50,8 +52,17 @@ public class BoardController {
 	}
 	
 	@PostMapping("/write")
-	public ModelAndView doBoardWrite(@ModelAttribute BoardVO boardVO, HttpServletRequest request, @RequestParam MultipartFile file) {
+	public ModelAndView doBoardWrite(@Valid @ModelAttribute BoardVO boardVO, BindingResult bindingResult
+			                       , HttpServletRequest request, @RequestParam MultipartFile file) {
 		ModelAndView mav = new ModelAndView("redirect:/board/list");
+		
+		if (bindingResult.hasErrors()) {
+			mav.setViewName("board/boardwrite");
+			mav.addObject("board", boardVO);
+			
+			return mav;
+		}
+		
 		boardVO.setIpAddr(request.getRemoteAddr());
 		
 		boolean isSuccess = boardService.createNewBoard(boardVO, file);
@@ -112,8 +123,15 @@ public class BoardController {
 	}
 	
 	@PostMapping("/modify")
-	public ModelAndView doBoardUpdate(@ModelAttribute BoardVO boardVO, @RequestParam MultipartFile file) {
+	public ModelAndView doBoardUpdate(@Valid @ModelAttribute BoardVO boardVO, BindingResult bindingResult, @RequestParam MultipartFile file) {
 		ModelAndView mav = new ModelAndView("redirect:/board/view?id=" + boardVO.getId());
+		
+		if (bindingResult.hasErrors()) {
+			mav.setViewName("board/boardmodify");
+			mav.addObject("board", boardVO);
+			
+			return mav;
+		}
 		
 		boolean isSuccess = boardService.updateOneBoard(boardVO, file);
 		if (isSuccess) {

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,6 +26,7 @@
     label {
         padding-left: 10px;
     }
+
     button, input, textarea {
         padding: 10px;
     }
@@ -32,12 +34,30 @@
     input[type=file] {
         padding: 0;
     }
+
+    div.errors {
+        background-color: #ff00004a;
+        opacity: 0.8;
+        padding: 10;
+        color: #333;
+    }
+    
+    div.errors:last-child {
+        margin-bottom: 15px;
+    }
 </style>
 </head>
 <body>
     <h1 id="id">${board.id}번 게시글 수정</h1>
-    <form method="post" action="/board/modify" enctype="multipart/form-data">
+    <form:form modelAttribute="boardVO" method="post" action="/board/modify" enctype="multipart/form-data">
         <input type="hidden" name="id" value="${board.id}">
+        
+        <div>
+            <form:errors path="subject" element="div" cssClass="errors"/>
+            <form:errors path="email" element="div" cssClass="errors"/>
+            <form:errors path="content" element="div" cssClass="errors"/>
+        </div>
+
         <div class="grid">
             <label for="subject">제목</label>
             <input type="text" id="subject" name="subject" value="${board.subject}">
@@ -57,10 +77,11 @@
             <div class="btn-group">
                 <div class="right-align">
                     <input type="submit" value="수정">
+                    <a href="/board/view/${board.id}"><button>취소</button></a>
                 </div>
             </div>
         </div>
-    </form>
+    </form:form>
     <script>
         const id = document.getElementById('id');
         let boardId = `${board.id}`;
