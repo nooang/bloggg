@@ -1,4 +1,4 @@
-package com.example.blog.controller;
+package com.example.blog.bbs.controller;
 
 import java.io.File;
 import java.io.FileInputStream;

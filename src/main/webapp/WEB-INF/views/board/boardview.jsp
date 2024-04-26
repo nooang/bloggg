@@ -30,6 +30,7 @@
     label {
         padding-left: 10px;
     }
+    
     button, input, textarea {
         padding: 10px;
     }

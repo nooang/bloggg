@@ -21,4 +21,9 @@ public class CustomBeanInitializer {
 		fileHandler.setEnableObfuscationHideExt(enableObfuscationHideExt);
 		return fileHandler;
 	}
+	
+	@Bean
+	public SHA sha() {
+		return new SHA();
+	}
 }
