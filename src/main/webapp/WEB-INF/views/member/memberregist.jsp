@@ -54,7 +54,7 @@
 <script type="text/javascript">
     $().ready(() => {
         $('#email').keyup(() => {
-            $.get('member/regist/available', {'email': $(this).val()}, (data) => {
+            $.get('/member/regist/available', {'email': $('#email').val()}, function(data) {
                 let email = data.email;
                 let available = data.available;
 

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.example.blog.member.service.MemberService;
 import com.example.blog.member.vo.MemberVO;
+import com.example.blog.member.vo.validategroup.MemberLoginGroup;
+import com.example.blog.member.vo.validategroup.MemberRegistGroup;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -43,7 +48,7 @@ public class MemberController {
 	}
 	
 	@PostMapping("/regist")
-	public ModelAndView doRegistMember(@Valid @ModelAttribute MemberVO memberVO, BindingResult bindingResult) {
+	public ModelAndView doRegistMember(@Validated(MemberRegistGroup.class) @ModelAttribute MemberVO memberVO, BindingResult bindingResult) {
 		ModelAndView mav = new ModelAndView("redirect:/member/login");
 		
 		if (bindingResult.hasErrors()) {
@@ -66,5 +71,35 @@ public class MemberController {
 	@GetMapping("/login")
 	public String viewLoginPage() {
 		return "member/memberlogin";
+	}
+	
+	@PostMapping("/login")
+	public ModelAndView doLogin(@Validated(MemberLoginGroup.class) @ModelAttribute MemberVO memberVO, BindingResult bindingResult, HttpSession session, HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView("redirect:/board/list");
+		
+		if (bindingResult.hasErrors()) {
+			mav.setViewName("member/memberlogin");
+			mav.addObject("member", memberVO);
+			return mav;
+		}
+		
+		try {
+			memberVO.setLatestAccessIp(request.getRemoteAddr());
+			MemberVO member = memberService.getMember(memberVO);
+			session.setAttribute("_LOGIN_USER_", member);
+		} catch (IllegalArgumentException iae) {
+			mav.setViewName("member/memberlogin");
+			mav.addObject("member", memberVO);
+			mav.addObject("message", iae.getMessage());
+			return mav;
+		}
+		
+		return mav;
+	}
+	
+	@GetMapping("/logout")
+	public String doLogout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/board/list";
 	}
 }

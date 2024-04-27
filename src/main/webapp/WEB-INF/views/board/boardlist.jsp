@@ -45,7 +45,7 @@
 	div.grid {
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 28px 1fr 28px;
+		grid-template-rows: 28px 28px 1fr 28px;
 		row-gap: 10px;
 	}
 
@@ -56,10 +56,37 @@
 	.center-align {
 		text-align: center;
 	}
+
+	ul.horizontal-list {
+		padding: 0;
+		margin: 0;
+	}
+
+	ul.horizontal-list > li {
+		display: inline;
+	}
 </style>
 </head>
 <body>
 	<div class="grid">
+		<div class="right-align">
+			<ul class="horizontal-list">
+				<c:choose>
+					<c:when test="${empty sessionScope._LOGIN_USER_}">
+						<li><a href="/member/regist">회원가입</a></li>
+						<li><a href="/member/login">로그인</a></li>
+					</c:when>
+					<c:otherwise>
+						<li style="margin-right: 15px;">
+							<strong>${sessionScope._LOGIN_USER_.nickName}</strong> (${sessionScope._LOGIN_USER_.email})
+						</li>
+						<li>
+							<a href="/member/logout">로그아웃</a>
+						</li>
+					</c:otherwise>
+				</c:choose>
+			</ul>
+		</div>
 		<div class="right-align">
 			총 ${boardList.boardCnt}건의 게시글이 검색되었습니다.
 		</div>
@@ -96,9 +123,11 @@
 				</c:choose>
 			</tbody>
 		</table>
-		<div class="right-align">
-			<a href="/board/write">글쓰기</a>
-		</div>
+		<c:if test="${not empty sessionScope._LOGIN_USER_}">
+			<div class="right-align">
+				<a href="/board/write">글쓰기</a>
+			</div>
+		</c:if>
 	</div>
 	<script>
 		const id = document.getElementsByName('id');
