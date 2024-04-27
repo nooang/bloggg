@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -25,6 +26,7 @@ import com.example.blog.bbs.service.BoardService;
 import com.example.blog.bbs.vo.BoardListVO;
 import com.example.blog.bbs.vo.BoardVO;
 import com.example.blog.beans.FileHandler;
+import com.example.blog.member.vo.MemberVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -53,7 +55,7 @@ public class BoardController {
 	
 	@PostMapping("/write")
 	public ModelAndView doBoardWrite(@Valid @ModelAttribute BoardVO boardVO, BindingResult bindingResult
-			                       , HttpServletRequest request, @RequestParam MultipartFile file) {
+			                       , HttpServletRequest request, @RequestParam MultipartFile file, @SessionAttribute("_LOGIN_USER_") MemberVO memberVO) {
 		ModelAndView mav = new ModelAndView("redirect:/board/list");
 		
 		if (bindingResult.hasErrors()) {
@@ -64,7 +66,7 @@ public class BoardController {
 		}
 		
 		boardVO.setIpAddr(request.getRemoteAddr());
-		
+		boardVO.setEmail(memberVO.getEmail());
 		boolean isSuccess = boardService.createNewBoard(boardVO, file);
 		if (isSuccess) {
 			return mav;
@@ -114,16 +116,21 @@ public class BoardController {
 	}
 	
 	@GetMapping("/modify/{id}")
-	public ModelAndView viewBoardModifyPage(@PathVariable String id) {
+	public ModelAndView viewBoardModifyPage(@PathVariable String id, @SessionAttribute("_LOGIN_USER_") MemberVO memberVO) {
 		ModelAndView mav = new ModelAndView("board/boardmodify");
 		
 		BoardVO boardVO = boardService.getOneBoard(id, false);
+		
+		if (!boardVO.getEmail().equals(memberVO.getEmail())) {
+			throw new IllegalArgumentException("어허! 어디서 남의 글을 손대려 하십니까!");
+		}
 		mav.addObject("board", boardVO);
 		return mav;
 	}
 	
 	@PostMapping("/modify")
-	public ModelAndView doBoardUpdate(@Valid @ModelAttribute BoardVO boardVO, BindingResult bindingResult, @RequestParam MultipartFile file) {
+	public ModelAndView doBoardUpdate(@Valid @ModelAttribute BoardVO boardVO, BindingResult bindingResult, @RequestParam MultipartFile file
+			                        , @SessionAttribute("_LOGIN_USER_") MemberVO memberVO) {
 		ModelAndView mav = new ModelAndView("redirect:/board/view?id=" + boardVO.getId());
 		
 		if (bindingResult.hasErrors()) {
@@ -133,6 +140,12 @@ public class BoardController {
 			return mav;
 		}
 		
+		BoardVO originalBoardVO = boardService.getOneBoard(boardVO.getId(), false);
+		if (!originalBoardVO.getEmail().equals(memberVO.getEmail())) {
+			throw new IllegalArgumentException("어허! 어디서 남의 글을 손대려 하십니까!");
+		}
+		
+		boardVO.setEmail(memberVO.getEmail());
 		boolean isSuccess = boardService.updateOneBoard(boardVO, file);
 		if (isSuccess) {
 			return mav;
@@ -145,7 +158,12 @@ public class BoardController {
 	}
 	
 	@GetMapping("/delete/{id}")
-	public String doDeleteBoard(@PathVariable String id) {
+	public String doDeleteBoard(@PathVariable String id, @SessionAttribute MemberVO memberVO) {
+		BoardVO originalBoardVO = boardService.getOneBoard(id, false);
+		if (!originalBoardVO.getEmail().equals(memberVO.getEmail())) {
+			throw new IllegalArgumentException("어허! 어디서 남의 글을 손대려 하십니까!");
+		}
+		
 		boolean isSuccess = boardService.deleteOneBoard(id);
 		if (isSuccess) {
 			return "redirect:/board/list";

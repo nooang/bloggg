@@ -69,24 +69,7 @@
 </head>
 <body>
 	<div class="grid">
-		<div class="right-align">
-			<ul class="horizontal-list">
-				<c:choose>
-					<c:when test="${empty sessionScope._LOGIN_USER_}">
-						<li><a href="/member/regist">회원가입</a></li>
-						<li><a href="/member/login">로그인</a></li>
-					</c:when>
-					<c:otherwise>
-						<li style="margin-right: 15px;">
-							<strong>${sessionScope._LOGIN_USER_.nickName}</strong> (${sessionScope._LOGIN_USER_.email})
-						</li>
-						<li>
-							<a href="/member/logout">로그아웃</a>
-						</li>
-					</c:otherwise>
-				</c:choose>
-			</ul>
-		</div>
+		<jsp:include page="../member/membermenu.jsp"></jsp:include>
 		<div class="right-align">
 			총 ${boardList.boardCnt}건의 게시글이 검색되었습니다.
 		</div>
@@ -108,7 +91,7 @@
 							<tr>
 								<td name="id">${board.id}</td>
 								<td><a href="/board/view?id=${board.id}">${board.subject}</a></td>
-								<td>${board.email}</td>
+								<td><strong>${board.memberVO.nickName}</strong> (${board.email})</td>
 								<td>${board.viewCnt}</td>
 								<td>${board.crtDt}</td>
 								<td>${board.mdfyDt}</td>
@@ -137,6 +120,8 @@
 			let idNum = idString.match(/0*([1-9]\d*)$/)[1];
 			id[i].innerText = `\${idNum}`
 		}
+
+
 	</script>
 </body>
 </html>

@@ -7,10 +7,15 @@
 <meta charset="UTF-8">
 <title>블로그 게시글 작성</title>
 <style type="text/css">
+    a:link, a:hover, a:visited, a:active {
+        color: #333;
+        text-decoration: none;
+    }
+
 	div.grid {
         display: grid;
         grid-template-columns: 80px 1fr;
-        grid-template-rows: 28px 28px 28px 320px 1fr;
+        grid-template-rows: 28px 28px 320px 1fr;
         row-gap: 10px;
     }
 
@@ -44,22 +49,34 @@
     div.errors:last-child {
         margin-bottom: 15px;
     }
+
+    ul.horizontal-list {
+		padding: 0;
+		margin: 0;
+	}
+
+	ul.horizontal-list > li {
+		display: inline;
+	}
+
+    .membermenu {
+        text-align: right;
+    }
 </style>
 </head>
 <body>
+    <div class="membermenu">
+        <jsp:include page="../member/membermenu.jsp"></jsp:include>
+    </div>
     <h1>게시글 작성</h1>
     <form:form modelAttribute="boardVO" method="post" enctype="multipart/form-data">
         <div>
             <form:errors path="subject" element="div" cssClass="errors"/>
-            <form:errors path="email" element="div" cssClass="errors"/>
             <form:errors path="content" element="div" cssClass="errors"/>
         </div>
         <div class="grid">
             <label for="subject">제목</label>
             <input type="text" id="subject" name="subject" value="${board.subject}">
-    
-            <label for="email">이메일</label>
-            <input type="email" id="email" name="email" value="${board.email}">
 
             <label for="file">첨부파일</label>
             <input type="file" id="file" name="file">

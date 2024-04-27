@@ -9,10 +9,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.blog.member.service.MemberService;
@@ -74,8 +76,9 @@ public class MemberController {
 	}
 	
 	@PostMapping("/login")
-	public ModelAndView doLogin(@Validated(MemberLoginGroup.class) @ModelAttribute MemberVO memberVO, BindingResult bindingResult, HttpSession session, HttpServletRequest request) {
-		ModelAndView mav = new ModelAndView("redirect:/board/list");
+	public ModelAndView doLogin(@Validated(MemberLoginGroup.class) @ModelAttribute MemberVO memberVO, BindingResult bindingResult
+			                  , HttpSession session, HttpServletRequest request, @RequestParam(required=false, defaultValue="/board/list") String next) {
+		ModelAndView mav = new ModelAndView("redirect:" + next);
 		
 		if (bindingResult.hasErrors()) {
 			mav.setViewName("member/memberlogin");
@@ -101,5 +104,28 @@ public class MemberController {
 	public String doLogout(HttpSession session) {
 		session.invalidate();
 		return "redirect:/board/list";
+	}
+	
+	@GetMapping("/delete-me")
+	public String doDeleteMe(@SessionAttribute("_LOGIN_USER_") MemberVO memberVO, HttpSession session) {
+		boolean isSuccess = memberService.deleteMe(memberVO.getEmail());
+		
+		if (!isSuccess) {
+			return "redirect:/member/fail-delete-me";
+		}
+		
+		session.invalidate();
+		return "redirect:/member/success-delete-me";
+	}
+	
+	@GetMapping("{result}-delete-me")
+	public String viewDeleteMePage(@PathVariable String result) {
+		result = result.toLowerCase();
+		
+		if (!result.equals("fail") && !result.equals("success")) {
+			return "error/404";
+		}
+		
+		return "member/" + result + "deleteme";
 	}
 }

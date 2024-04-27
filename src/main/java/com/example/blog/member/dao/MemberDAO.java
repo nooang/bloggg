@@ -10,4 +10,5 @@ public interface MemberDAO {
 	public int successLogin(MemberVO memberVO);
 	public int failLogin(MemberVO memberVO);
 	public int blockMember(String email);
+	public int deleteMe(String email);
 }

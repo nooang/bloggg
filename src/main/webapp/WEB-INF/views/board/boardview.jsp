@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,15 +45,31 @@
     a:hover {
         background-color: #ccc;
     }
+
+	ul.horizontal-list {
+		padding: 0;
+		margin: 0;
+	}
+
+	ul.horizontal-list > li {
+		display: inline;
+	}
+
+    .membermenu {
+        text-align: right;
+    }
 </style>
 </head>
 <body>
+    <div class="membermenu">
+        <jsp:include page="../member/membermenu.jsp"></jsp:include>
+    </div>
     <h1 id="id">${board.id}번 게시글</h1>
     <div class="grid">
         <label for="subject">제목</label>
         <div>${board.subject}</div>
         <label for="email">이메일</label>
-        <div>${board.email}</div>
+        <div><strong>${board.memberVO.nickName}</strong>(${board.email})</div>
         <label for="viewCnt">조회수</label>
         <div>${board.viewCnt}</div>
         <label for="originFileName">첨부파일</label>
@@ -68,8 +85,10 @@
         <div class="btn-group">
             <div class="right-align">
                 <a href="/board/list">게시판으로</a>
-                <a href="/board/modify/${board.id}">수정</a>
-                <a href="/board/delete/${board.id}" id="del">삭제</a>
+                <c:if test="${sessionScope._LOGIN_USER_.email eq board.email}">
+                    <a href="/board/modify/${board.id}">수정</a>
+                    <a href="/board/delete/${board.id}" id="del">삭제</a>
+                </c:if>
             </div>
         </div>
     </div>

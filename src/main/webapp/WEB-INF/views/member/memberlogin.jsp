@@ -47,7 +47,7 @@
 </head>
 <body>
     <h1>로그인</h1>
-    <form:form modelAttribute="memberVO" method="post">
+    <form:form modelAttribute="memberVO" method="post" action="/member/login">
         <div>
             <form:errors path="email" element="div" cssClass="errors"/>
             <form:errors path="password" element="div" cssClass="errors"/>
@@ -57,6 +57,7 @@
         </div>
 
         <div class="grid">
+            <input type="hidden" name="next" value="${next}">
             <label for="email">이메일</label>
             <input type="email" name="email" id="email" value="${member.email}">
 

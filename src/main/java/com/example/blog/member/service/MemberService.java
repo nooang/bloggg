@@ -6,4 +6,5 @@ public interface MemberService {
 	public boolean checkAvailableEmail(String email);
 	public boolean createNewMember(MemberVO memberVO);
 	public MemberVO getMember(MemberVO memberVO);
+	public boolean deleteMe(String email);
 }

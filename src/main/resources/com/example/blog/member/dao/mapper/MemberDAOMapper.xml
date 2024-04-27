@@ -79,4 +79,10 @@
 		 WHERE EMAIL = #{email}
 		   AND LOGIN_CNT >= 3
 	</update>
+	
+	<delete id="deleteMe" parameterType="string">
+		DELETE 
+		  FROM MEMBERS
+		 WHERE EMAIL = #{email}
+	</delete>
 </mapper>

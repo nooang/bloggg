@@ -6,10 +6,10 @@ spring:
     driver-class-name: oracle.jdbc.driver.OracleDriver
     username: MY_BLOG
     password: 1234
-  mvc:
-    view:
-      prefix: /WEB-INF/views/
-      suffix: .jsp
+#  mvc:
+#    view:
+#      prefix: /WEB-INF/views/
+#      suffix: .jsp
   servlet:
     multipart:
       max-file-size: 104857600 # 100MB, 최대 업로드 파일 크기
@@ -25,4 +25,4 @@ app:
     obfuscation: # 파일명 난독화 여부
       enable: true
       hide-ext: # 파일 확장자를 가릴 것인지?
-        enable: true  
+        enable: true
