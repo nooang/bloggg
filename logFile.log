@@ -1,0 +1,19 @@
+334090 [restartedMain] INFO  com.example.blog.BlogApplication -- Starting BlogApplication using Java 20.0.1 with PID 19996 (D:\dev\sts_workspace\blog\target\classes started by admin in D:\dev\sts_workspace\blog)
+334090 [restartedMain] INFO  com.example.blog.BlogApplication -- No active profile set, falling back to 1 default profile: "default"
+334232 [restartedMain] WARN  o.m.s.mapper.ClassPathMapperScanner -- No MyBatis mapper was found in '[com.example.blog]' package. Please check your configuration.
+334273 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer -- Tomcat initialized with port 8080 (http)
+334274 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol -- Initializing ProtocolHandler ["http-nio-8080"]
+334274 [restartedMain] INFO  o.a.catalina.core.StandardService -- Starting service [Tomcat]
+334274 [restartedMain] INFO  o.a.catalina.core.StandardEngine -- Starting Servlet engine: [Apache Tomcat/10.1.20]
+334371 [restartedMain] INFO  o.apache.jasper.servlet.TldScanner -- At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+334378 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] -- Initializing Spring embedded WebApplicationContext
+334379 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext -- Root WebApplicationContext: initialization completed in 287 ms
+334411 [restartedMain] WARN  o.s.aop.framework.CglibAopProxy -- Unable to proxy interface-implementing method [public final void org.springframework.dao.support.DaoSupport.afterPropertiesSet() throws java.lang.IllegalArgumentException,org.springframework.beans.factory.BeanInitializationException] because it is marked as final, consider using interface-based JDK proxies instead.
+334419 [restartedMain] WARN  o.s.aop.framework.CglibAopProxy -- Unable to proxy interface-implementing method [public final void org.springframework.dao.support.DaoSupport.afterPropertiesSet() throws java.lang.IllegalArgumentException,org.springframework.beans.factory.BeanInitializationException] because it is marked as final, consider using interface-based JDK proxies instead.
+334479 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer -- LiveReload server is running on port 35729
+334485 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol -- Starting ProtocolHandler ["http-nio-8080"]
+334489 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer -- Tomcat started on port 8080 (http) with context path ''
+334492 [restartedMain] INFO  com.example.blog.BlogApplication -- Started BlogApplication in 0.439 seconds (process running for 334.954)
+334493 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener -- Condition evaluation unchanged
+386743 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener -- Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+386747 [Thread-31] INFO  o.a.coyote.http11.Http11NioProtocol -- Stopping ProtocolHandler ["http-nio-8080"]

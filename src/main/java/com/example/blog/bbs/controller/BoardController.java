@@ -15,6 +15,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -50,17 +52,22 @@ public class BoardController {
 	@Autowired
 	private FileHandler fileHandler;
 	
+	private Logger logger = LoggerFactory.getLogger(BoardController.class);
+	
 	@GetMapping("/list")
 	public ModelAndView viewBoardList() {
 		ModelAndView mav = new ModelAndView("board/boardlist");
 		BoardListVO boardListVO = boardService.getAllBoard();
 		mav.addObject("boardList", boardListVO);
 		
+		logger.debug("보드 리스트에 접근하였습니다.");
+		
 		return mav;
 	}
 	
 	@GetMapping("/write")
 	public String viewBoardWritePage() {
+		logger.debug("글쓰기 페이지에 접근하였습니다.");
 		return "board/boardwrite";
 	}
 	
