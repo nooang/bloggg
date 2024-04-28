@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.blog.bbs.dao.BoardDAO;
@@ -29,6 +30,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
+	@Transactional
 	public boolean createNewBoard(BoardVO boardVO, MultipartFile file) {
 		StoredFile storedFile = fileHandler.storeFile(file);
 		
@@ -39,6 +41,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
+	@Transactional
 	public BoardVO getOneBoard(String id, boolean isIncrease) {
 		if (isIncrease) {
 			int updateCount = boardDAO.increaseViewCount(id);
@@ -55,6 +58,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
+	@Transactional
 	public boolean updateOneBoard(BoardVO boardVO, MultipartFile file) {
 		if (file != null && !file.isEmpty()) {
 			BoardVO originBoardVO = boardDAO.getOneBoard(boardVO.getId());
@@ -75,6 +79,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
+	@Transactional
 	public boolean deleteOneBoard(String id) {
 		return boardDAO.deleteOneBoard(id) > 0;
 	}

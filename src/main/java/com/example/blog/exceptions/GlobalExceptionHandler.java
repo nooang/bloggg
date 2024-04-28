@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
 		return mav;
 	}
 	
-	@ExceptionHandler({FileNotExistsException.class, MakeXlsxFileException.class})
+	@ExceptionHandler({FileNotExistsException.class, MakeXlsxFileException.class, RuntimeException.class})
 	public ModelAndView viewErrorPage(RuntimeException runtimeException) {
 		ModelAndView mav = new ModelAndView("error/500");
 		mav.addObject("message", runtimeException.getMessage());
