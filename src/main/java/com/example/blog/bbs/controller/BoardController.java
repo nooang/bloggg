@@ -39,6 +39,10 @@ import com.example.blog.bbs.service.BoardService;
 import com.example.blog.bbs.vo.BoardListVO;
 import com.example.blog.bbs.vo.BoardVO;
 import com.example.blog.beans.FileHandler;
+import com.example.blog.exceptions.FileNotExistsException;
+import com.example.blog.exceptions.MakeXlsxFileException;
+import com.example.blog.exceptions.PageNotFoundException;
+import com.example.blog.exceptions.UserIdentifyNotMatchException;
 import com.example.blog.member.vo.MemberVO;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -111,7 +115,7 @@ public class BoardController {
 		BoardVO boardVO = boardService.getOneBoard(id, false);
 		
 		if (boardVO == null) {
-			throw new IllegalArgumentException("잘못된 접근입니다. 혹시 없는 게시글이 아닌지?");
+			throw new PageNotFoundException("잘못된 접근입니다. 혹시 없는 게시글이 아닌지?");
 		}
 		
 		File storedFile = fileHandler.getStoredFile(boardVO.getFileName());
@@ -123,7 +127,7 @@ public class BoardController {
 		try {
 			resource = new InputStreamResource(new FileInputStream(storedFile));
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException("파일이 존재하지 않습니다.");
+			throw new FileNotExistsException("파일이 존재하지 않습니다.");
 		}
 		
 		return ResponseEntity.ok()
@@ -140,7 +144,7 @@ public class BoardController {
 		BoardVO boardVO = boardService.getOneBoard(id, false);
 		
 		if (!boardVO.getEmail().equals(memberVO.getEmail())) {
-			throw new IllegalArgumentException("어허! 어디서 남의 글을 손대려 하십니까!");
+			throw new UserIdentifyNotMatchException(memberVO, "어허! 어디서 남의 글을 손대려 하십니까!");
 		}
 		mav.addObject("board", boardVO);
 		return mav;
@@ -160,7 +164,7 @@ public class BoardController {
 		
 		BoardVO originalBoardVO = boardService.getOneBoard(boardVO.getId(), false);
 		if (!originalBoardVO.getEmail().equals(memberVO.getEmail())) {
-			throw new IllegalArgumentException("어허! 어디서 남의 글을 손대려 하십니까!");
+			throw new UserIdentifyNotMatchException(memberVO, "어허! 어디서 남의 글을 손대려 하십니까!");
 		}
 		
 		boardVO.setEmail(memberVO.getEmail());
@@ -179,7 +183,7 @@ public class BoardController {
 	public String doDeleteBoard(@PathVariable String id, @SessionAttribute MemberVO memberVO) {
 		BoardVO originalBoardVO = boardService.getOneBoard(id, false);
 		if (!originalBoardVO.getEmail().equals(memberVO.getEmail())) {
-			throw new IllegalArgumentException("어허! 어디서 남의 글을 손대려 하십니까!");
+			throw new UserIdentifyNotMatchException(memberVO, "어허! 어디서 남의 글을 손대려 하십니까!");
 		}
 		
 		boolean isSuccess = boardService.deleteOneBoard(id);
@@ -256,7 +260,7 @@ public class BoardController {
 			os = new FileOutputStream(storedFile);
 			workbook.write(os);
 		} catch (IOException e) {
-			throw new IllegalArgumentException("엑셀파일을 만들 수 없습니다.");
+			throw new MakeXlsxFileException("엑셀파일을 만들 수 없습니다.");
 		} finally {
 			try {
 				workbook.close();
@@ -282,7 +286,7 @@ public class BoardController {
 		try {
 			resource = new InputStreamResource(new FileInputStream(storedFile));
 		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException("파일이 존재하지 않습니다.");
+			throw new FileNotExistsException("파일이 존재하지 않습니다.");
 		}
 		
 		return ResponseEntity.ok().headers(header).body(resource);

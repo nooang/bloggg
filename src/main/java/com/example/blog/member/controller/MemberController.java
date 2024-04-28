@@ -86,16 +86,16 @@ public class MemberController {
 			return mav;
 		}
 		
-		try {
+//		try {
 			memberVO.setLatestAccessIp(request.getRemoteAddr());
 			MemberVO member = memberService.getMember(memberVO);
 			session.setAttribute("_LOGIN_USER_", member);
-		} catch (IllegalArgumentException iae) {
-			mav.setViewName("member/memberlogin");
-			mav.addObject("member", memberVO);
-			mav.addObject("message", iae.getMessage());
-			return mav;
-		}
+//		} catch (IllegalArgumentException iae) {
+//			mav.setViewName("member/memberlogin");
+//			mav.addObject("member", memberVO);
+//			mav.addObject("message", iae.getMessage());
+//			return mav;
+//		}
 		
 		return mav;
 	}

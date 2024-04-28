@@ -11,6 +11,7 @@ import com.example.blog.bbs.vo.BoardListVO;
 import com.example.blog.bbs.vo.BoardVO;
 import com.example.blog.beans.FileHandler;
 import com.example.blog.beans.FileHandler.StoredFile;
+import com.example.blog.exceptions.PageNotFoundException;
 
 @Service
 public class BoardServiceImpl implements BoardService {
@@ -42,13 +43,13 @@ public class BoardServiceImpl implements BoardService {
 		if (isIncrease) {
 			int updateCount = boardDAO.increaseViewCount(id);
 			if (updateCount == 0) {
-				throw new IllegalArgumentException("잘못된 접근입니다. 혹시 없는 게시글이 아닌지?");
+				throw new PageNotFoundException("잘못된 접근입니다. 혹시 없는 게시글이 아닌지?");
 			}			
 		}
 		
 		BoardVO boardVO = boardDAO.getOneBoard(id);
 		if (boardVO == null) {
-			throw new IllegalArgumentException("잘못된 접근입니다. 혹시 없는 게시글이 아닌지?");
+			throw new PageNotFoundException("잘못된 접근입니다. 혹시 없는 게시글이 아닌지?");
 		}
 		return boardVO;
 	}
