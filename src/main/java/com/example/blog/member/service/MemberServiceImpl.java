@@ -41,7 +41,7 @@ public class MemberServiceImpl implements MemberService {
 	public MemberVO getMember(MemberVO memberVO) {
 		String salt = memberDAO.getSalt(memberVO.getEmail());
 		if (salt == null) {
-			throw new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다.1");
+			throw new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다.");
 		}
 		
 		String password = memberVO.getPassword();
@@ -53,7 +53,7 @@ public class MemberServiceImpl implements MemberService {
 			memberVO.setPassword(password);
 			memberDAO.failLogin(memberVO);
 			memberDAO.blockMember(memberVO.getEmail());
-			throw new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다.2");
+			throw new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다.");
 		}
 		
 		if (member.getBlockYn().equalsIgnoreCase("Y")) {

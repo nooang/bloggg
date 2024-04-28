@@ -108,6 +108,7 @@
 		</table>
 		<c:if test="${not empty sessionScope._LOGIN_USER_}">
 			<div class="right-align">
+				<a href="/board/excel/download">엑셀 다운로드</a>
 				<a href="/board/write">글쓰기</a>
 			</div>
 		</c:if>
