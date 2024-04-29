@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.blog.bbs.dao.ReplyDAO">
+	<resultMap type="com.example.blog.bbs.vo.ReplyVO" id="ReplyVOMap" autoMapping="true">
+		<id column="REPLY_ID" property="replyId"/>
+		<association property="memberVO" javaType="com.example.blog.member.vo.MemberVO">
+			<id column="EMAIL" property="email"/>
+			<result column="NAME" property="name"/>		
+			<result column="NICK_NAME" property="nickName"/>		
+		</association>
+	</resultMap>
+	
+	<select id="getAllReplies" parameterType="string" resultMap="ReplyVOMap">
+		 SELECT LEVEL
+		      , R.REPLY_ID
+		      , R.BOARD_ID
+		      , R.EMAIL
+		      , R.CONTENT
+		      , TO_CHAR(R.CRT_DT, 'YYYY-MM-DD') CRT_DT
+		      , TO_CHAR(R.MDFY_DT, 'YYYY-MM-DD') MDFY_DT
+		      , R.RECOMMEND_CNT
+		      , R.PARENT_REPLY_ID
+		      , R.PARENT_REPLY_ID_NUM
+		      , R.REPLY_ID_NUM
+		      , M.NAME
+		      , M.NICK_NAME
+		   FROM REPLIES R
+		  INNER JOIN BOARD B
+		     ON R.BOARD_ID = B.ID
+		  INNER JOIN MEMBERS M
+		     ON R.EMAIL = M.EMAIL
+		  START WITH R.PARENT_REPLY_ID_NUM = 0
+		    AND R.BOARD_ID = #{boardId}
+		CONNECT BY PRIOR R.REPLY_ID_NUM = R.PARENT_REPLY_ID_NUM
+	</select>
+	
+	<select id="getOneReply" parameterType="string" resultMap="ReplyVOMap">
+		 SELECT LEVEL
+		      , R.REPLY_ID
+		      , R.BOARD_ID
+		      , R.EMAIL
+		      , R.CONTENT
+		      , TO_CHAR(R.CRT_DT, 'YYYY-MM-DD') CRT_DT
+		      , TO_CHAR(R.MDFY_DT, 'YYYY-MM-DD') MDFY_DT
+		      , R.RECOMMEND_CNT
+		      , R.PARENT_REPLY_ID
+		      , R.PARENT_REPLY_ID_NUM
+		      , R.REPLY_ID_NUM
+		      , M.NAME
+		      , M.NICK_NAME
+		   FROM REPLIES R
+		  INNER JOIN MEMBERS M
+		     ON R.EMAIL = M.EMAIL
+		  INNER JOIN BOARD B
+		     ON R.BOARD_ID = B.ID
+		  WHERE R.REPLY_ID = #{replyId}
+	</select>
+	
+	<insert id="createNewReply" parameterType="com.example.blog.bbs.vo.ReplyVO">
+		INSERT INTO REPLIES (
+			  REPLY_ID
+			, BOARD_ID
+			, EMAIL
+			, CONTENT
+			, CRT_DT
+			, MDFY_DT
+			, RECOMMEND_CNT
+			, PARENT_REPLY_ID
+			, PARENT_REPLY_ID_NUM
+			, REPLY_ID_NUM)
+			VALUES (
+			  'RE-' || TO_CHAR(SYSDATE, 'YYYYMMDD') || '-' || LPAD(SEQ_REPLIES_PK.NEXTVAL, 6, '0')
+			, #{boardId}
+			, #{email}
+			, #{content}
+			, SYSDATE
+			, NULL
+			, 0
+			, #{parentReplyId}
+			, #{parentReplyIdNum}
+			, SEQ_REPLIES_PK.CURRVAL)
+	</insert>
+	
+	<delete id="deleteOneReply" parameterType="string">
+		DELETE 
+		  FROM REPLIES
+		 WHERE REPLY_ID = #{replyId}
+	</delete>
+	
+	<update id="recommendOneReply" parameterType="string">
+		UPDATE REPLIES
+		   SET RECOMMEND_CNT = RECOMMEND_CNT + 1
+		 WHERE REPLY_ID = #{replyId}
+	</update>
+</mapper>
