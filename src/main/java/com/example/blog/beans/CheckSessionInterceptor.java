@@ -6,6 +6,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.example.blog.member.vo.MemberVO;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -23,10 +24,16 @@ public class CheckSessionInterceptor implements HandlerInterceptor {
 			if (method.equals("get")) {
 				String requestURI = request.getRequestURI();
 				String queryString = getQueryStrings(request);
+				
+				request.setAttribute("next", requestURI + queryString);
 			}
+			
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/member/memberlogin.jsp");
+			rd.forward(request, response);
+			return false;
 		}
 		
-		return HandlerInterceptor.super.preHandle(request, response, handler);
+		return true;
 	}
 	
 	private String getQueryStrings(HttpServletRequest request) {
