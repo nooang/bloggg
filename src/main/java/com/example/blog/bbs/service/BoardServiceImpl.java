@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.blog.bbs.dao.BoardDAO;
 import com.example.blog.bbs.vo.BoardListVO;
 import com.example.blog.bbs.vo.BoardVO;
+import com.example.blog.bbs.vo.SearchBoardVO;
 import com.example.blog.beans.FileHandler;
 import com.example.blog.beans.FileHandler.StoredFile;
 import com.example.blog.exceptions.PageNotFoundException;
@@ -22,10 +23,17 @@ public class BoardServiceImpl implements BoardService {
 	private FileHandler fileHandler;
 	
 	@Override
-	public BoardListVO getAllBoard() {
+	@Transactional
+	public BoardListVO getAllBoard(SearchBoardVO searchBoardVO) {
 		BoardListVO boardListVO = new BoardListVO();
 		boardListVO.setBoardCnt(boardDAO.getBoardAllCount());
-		boardListVO.setBoardList(boardDAO.getAllBoard());
+		
+		if (searchBoardVO == null) {
+			boardListVO.setBoardList(boardDAO.getAllBoard());
+		}
+		else {
+			boardListVO.setBoardList(boardDAO.searchAllBoard(searchBoardVO));
+		}
 		return boardListVO;
 	}
 	
@@ -81,6 +89,15 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	@Transactional
 	public boolean deleteOneBoard(String id) {
+		BoardVO originBoardVO = boardDAO.getOneBoard(id);
+		if (originBoardVO != null && originBoardVO.getFileName() != null) {
+			File originFile = fileHandler.getStoredFile(originBoardVO.getFileName());
+			
+			if (originFile.exists() && originFile.isFile()) {
+				originFile.delete();
+			}
+		}
+		
 		return boardDAO.deleteOneBoard(id) > 0;
 	}
 }
