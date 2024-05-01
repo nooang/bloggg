@@ -62,7 +62,7 @@ public class ReplyServiceImpl implements ReplyService {
 		if (!replyVO.getEmail().equals(originReplyVO.getEmail())) {
 			throw new PageNotFoundException("당신의 댓글이 아닙니다. (modify one reply)");
 		}
-		return false;
+		return replyDAO.modifyOneReply(replyVO) > 0;
 	}
 
 	@Override

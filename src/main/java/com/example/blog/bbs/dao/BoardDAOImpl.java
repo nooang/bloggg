@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.example.blog.bbs.vo.BoardVO;
+import com.example.blog.bbs.vo.SearchBoardVO;
 
 @Repository
 public class BoardDAOImpl extends SqlSessionDaoSupport implements BoardDAO {
@@ -18,13 +19,18 @@ public class BoardDAOImpl extends SqlSessionDaoSupport implements BoardDAO {
 	}
 	
 	@Override
-	public int getBoardAllCount() {
-		return getSqlSession().selectOne("getBoardAllCount");
+	public int getBoardAllCount(SearchBoardVO searchBoardVO) {
+		return getSqlSession().selectOne("getBoardAllCount", searchBoardVO);
 	}
 
 	@Override
 	public List<BoardVO> getAllBoard() {
 		return getSqlSession().selectList("getAllBoard");
+	}
+	
+	@Override
+	public List<BoardVO> searchAllBoard(SearchBoardVO searchBoardVO) {
+		return getSqlSession().selectList("searchAllBoard", searchBoardVO);
 	}
 	
 	@Override

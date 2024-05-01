@@ -30,7 +30,7 @@ public class AbstractSearchVO {
 		this.groupNo = this.pageNo / this.pageCountInGroup;
 		this.groupStartPageNo = this.groupNo * this.pageCountInGroup;
 		this.groupEndPageNo = (this.groupNo + 1) * this.pageCountInGroup - 1;
-		if (this.groupEndPageNo > this.pageCount) {
+		if (groupEndPageNo > this.pageCount - 1) {
 			this.groupEndPageNo = this.pageCount - 1;
 		}
 		this.hasNextGroup = this.groupNo + 1 < this.groupCount;

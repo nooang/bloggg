@@ -38,6 +38,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.example.blog.bbs.service.BoardService;
 import com.example.blog.bbs.vo.BoardListVO;
 import com.example.blog.bbs.vo.BoardVO;
+import com.example.blog.bbs.vo.SearchBoardVO;
 import com.example.blog.beans.FileHandler;
 import com.example.blog.exceptions.FileNotExistsException;
 import com.example.blog.exceptions.MakeXlsxFileException;
@@ -59,9 +60,10 @@ public class BoardController {
 	private Logger logger = LoggerFactory.getLogger(BoardController.class);
 	
 	@GetMapping("/list")
-	public ModelAndView viewBoardList() {
+	public ModelAndView viewBoardList(@ModelAttribute SearchBoardVO searchBoardVO) {
 		ModelAndView mav = new ModelAndView("board/boardlist");
-		BoardListVO boardListVO = boardService.getAllBoard();
+		BoardListVO boardListVO = boardService.getAllBoard(searchBoardVO);
+		searchBoardVO.setPageCount(boardListVO.getBoardCnt());
 		mav.addObject("boardList", boardListVO);
 		
 		logger.debug("보드 리스트에 접근하였습니다.");
@@ -197,7 +199,7 @@ public class BoardController {
 	
 	@GetMapping("/excel/download")
 	public ResponseEntity<Resource> downloadExcelFile() {
-		BoardListVO boardListVO = boardService.getAllBoard();
+		BoardListVO boardListVO = boardService.getAllBoard(null);
 		Workbook workbook = new SXSSFWorkbook(-1);
 		
 		Sheet sheet = workbook.createSheet("게시글 목록");

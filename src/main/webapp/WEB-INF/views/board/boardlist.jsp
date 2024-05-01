@@ -45,7 +45,7 @@
 	div.grid {
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 28px 28px 1fr 28px 28px;
+		grid-template-rows: 28px 28px 28px 1fr 28px;
 		row-gap: 10px;
 	}
 
@@ -191,8 +191,8 @@
 		})
 
 		function movePage(pageNo = 0) {
-			const pageNo = document.getElementById('pageNo');
-			pageNo.value = pageNo;
+			const pageNoElement = document.getElementById('pageNo');
+			pageNoElement.value = pageNo;
 
 			const searchForm = document.getElementById('search-form');
 			searchForm.setAttribute('action', '/board/list');

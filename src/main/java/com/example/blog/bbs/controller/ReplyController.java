@@ -51,8 +51,8 @@ public class ReplyController {
 		return resultMap;
 	}
 	
-	@GetMapping("/modify/{replyId}")
-	public Map<String, Object> doModifyReplies(@PathVariable String replyId, @ModelAttribute ReplyVO replyVO, @SessionAttribute("_LOGIN_USER)") MemberVO memberVO) {
+	@PostMapping("/modify/{replyId}")
+	public Map<String, Object> doModifyReplies(@PathVariable String replyId, @ModelAttribute ReplyVO replyVO, @SessionAttribute("_LOGIN_USER_") MemberVO memberVO) {
 		replyVO.setBoardId(replyId);
 		replyVO.setEmail(memberVO.getEmail());
 		
@@ -70,6 +70,18 @@ public class ReplyController {
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		resultMap.put("result", isSuccess);
+		
+		return resultMap;
+	}
+	
+	@GetMapping("/delete/{replyId}")
+	public Map<String, Object> doDeleteReplies(@PathVariable String replyId, @SessionAttribute("_LOGIN_USER_") MemberVO memberVO) {
+		boolean isSuccess = replyService.deleteOneReply(replyId, memberVO.getEmail());
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("result", isSuccess);
+		
+		System.out.println(resultMap);
 		
 		return resultMap;
 	}

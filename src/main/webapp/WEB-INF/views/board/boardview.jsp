@@ -106,6 +106,9 @@ $().ready(function() {
         let content = reply.find('.content').text();
         $('#txt-reply').val(content);
         $('#txt-reply').focus();
+
+        $('#txt-reply').data('mode', 'modify');
+        $('#txt-reply').data('target', replyId);
     }
 
     let deleteReply = function(e) {
@@ -116,7 +119,8 @@ $().ready(function() {
         $('#txt-reply').removeData('target');
 
         if (confirm('댓글을 삭제하시겠습니까?')) {
-            $.get(`/api/reply/delete/\${replyId}`, function(resposne) {
+            $.get(`/api/reply/delete/\${replyId}`, function(response) {
+                console.log(response)
                 let result = response.result;
 
                 if (result) {
@@ -164,7 +168,7 @@ $().ready(function() {
                 let replyTemplate = `
                     <div class="reply" data-reply-id="\${reply.replyId}" style="padding-left: \${(reply.level-1) * 40}px">
                         <div class="author">\${reply.memberVO.nickName} (\${reply.email})</div>
-                        <div class="recommend-count">추천수: \${reply.recommendCnt})</div>
+                        <div class="recommend-count">추천수: \${reply.recommendCnt}</div>
                         <div class="datetime">
                             <span class="crt-dt">등록: \${reply.crtDt}</span>
                             \${reply.mdfyDt ? `<span class="mdfy-dt">(수정: \${reply.mdfyDt})</span>` : ''}
@@ -281,11 +285,13 @@ $().ready(function() {
             mdfyDt.innerHTML = '-';
         }
 
-        del.addEventListener('click', (e) => {
-            if (!confirm('정말 삭제하시겠습니까?')) {
-                e.preventDefault();
-            }
-        });
+        if (del !== null) {
+            del.addEventListener('click', (e) => {
+                if (!confirm('정말 삭제하시겠습니까?')) {
+                    e.preventDefault();
+                }
+            });
+        }
     </script>
 </body>
 </html>
